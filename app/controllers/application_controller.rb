@@ -7,8 +7,9 @@ class ApplicationController < Sinatra::Base
    post '/login' do
     user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
+      token = JWT.encode({ user_id: user.id }, 'your-secret-key', 'HS256') # Generate token
       session[:user_id] = user.id
-      { message: 'Logged in successfully', user: user }.to_json
+      { message: 'Logged in successfully', user: user, token: token }.to_json # Include token in the response
     else
       { error: 'Invalid email or password' }.to_json
     end
@@ -28,8 +29,9 @@ class ApplicationController < Sinatra::Base
       password: params[:password]
     )
     if user.valid?
+      token = JWT.encode({ user_id: user.id }, 'your-secret-key', 'HS256') # Generate token
       session[:user_id] = user.id
-      { message: 'Signed up and logged in successfully', user: user }.to_json
+      { message: 'Signed up and logged in successfully', user: user, token: token }.to_json # Include token in the response
     else
       { error: user.errors.full_messages.join(', ') }.to_json
     end
