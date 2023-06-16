@@ -43,7 +43,7 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/events" do
-    event = Event.all.order(:created_at)
+    event = Event.all.order(created_at: :desc)
     event.to_json
   end 
 
